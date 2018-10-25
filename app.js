@@ -1,38 +1,33 @@
 const express = require("express");
 const key = require("./config/keys");
 const stripe = require("stripe")(key.stripeSecretKey);
-const bodyParse = require("body-parser");
+const bodyParser = require("body-parser");
 const exphbs = require("express-handlebars");
 
 const app = express();
 
-//handlebars middleware
+// Handlebars Middleware
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-//Body parse Middleware
-app.use(bodyParse.json());
-app.use(bodyParse.urlencoded({ extended: false }));
+// Body Parser Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// static folder
+// Set Static Folder
 app.use(express.static(`${__dirname}/public`));
-// todo lo que esta linea dice es que el folder que proveera losa archivos estaticos
-//esta en esa dirreciond el systema en la carpeta public
 
-// Index  Route
+// Index Route
 app.get("/", (req, res) => {
-  res.render("index");
-  stripePublishableKey: keys.stripePublishableKey;
+  res.render("index", {
+    stripePublishableKey: key.stripePublishableKey
+  });
 });
 
-// app.get("/success", (req, res) => {
-//   res.render("success");
-// });
-//charge Route–
+// Charge Route
 app.post("/charge", (req, res) => {
   const amount = 2500;
-  // console.log(req.body);
-  // res.send("hello fromt thes server");
+
   stripe.customers
     .create({
       email: req.body.stripeEmail,
@@ -52,5 +47,5 @@ app.post("/charge", (req, res) => {
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-  console.log("El servidor funciona");
+  console.log(`Server started on port ${port}`);
 });
